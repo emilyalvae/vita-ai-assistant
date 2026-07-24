@@ -1,13 +1,4 @@
-from langchain_google_genai import ChatGoogleGenerativeAI
-
-from config import GEMINI_API_KEY
-
-
-llm = ChatGoogleGenerativeAI(
-    model="gemini-flash-lite-latest",
-    google_api_key=GEMINI_API_KEY,
-    temperature=0
-)
+from app.config import llm
 
 
 response = llm.invoke(
@@ -16,6 +7,5 @@ response = llm.invoke(
     Preséntate brevemente.
     """
 )
-
 
 print(response.content)
