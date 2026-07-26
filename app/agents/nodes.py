@@ -1,7 +1,7 @@
 from .state import AgentState
 from app.rag.search import search_rag
 from app.agents.triage import triaje
-from app.rag.pipeline import retriever
+from app.rag.retriever_instance import retriever
 
 
 def nodo_triaje(state: AgentState) -> AgentState:
