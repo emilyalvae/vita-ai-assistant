@@ -1,114 +1,140 @@
 import streamlit as st
-
+from PIL import Image
 from app.agents.graph import graph
 
-
-# Configuración página
+logo = Image.open("assets/logo.png")
+# -------------------------------------------------
+# Configuración
+# -------------------------------------------------
 
 st.set_page_config(
     page_title="Vita - Clínica Vitalis",
-    page_icon="🏥"
+    page_icon=logo,
+    layout="centered"
+)
+# -------------------------------------------------
+# Encabezado
+# -------------------------------------------------
+
+col1, col2, col3 = st.columns([1, 2, 1])
+
+with col2:
+    st.image(logo, width=220)
+
+st.markdown(
+    """
+    <h1 style="text-align:center; margin-bottom:0;">
+        Clínica Vitalis
+    </h1>
+
+    <h3 style="text-align:center; color:gray;">
+        🤖 Vita - Asistente Virtual
+    </h3>
+
+    <p style="text-align:center;">
+        Bienvenido.<br><br>
+        Soy <b>Vita</b>, el asistente virtual de la
+        <b>Clínica Vitalis</b>.
+    </p>
+    """,
+    unsafe_allow_html=True
 )
 
-
-# Título
-
-st.title("🏥 Vita - Asistente Virtual")
-st.write(
-    "Hola, soy Vita, el asistente virtual de la Clínica Vitalis."
-)
-
-
-# Entrada usuario
-
+st.divider()
+# -------------------------------------------------
+# Entrada
+# -------------------------------------------------
 pregunta = st.text_input(
-    "¿En qué puedo ayudarte?"
+    "¿En qué puedo ayudarte?",
+    placeholder="Ejemplo: ¿Qué especialidades tiene la clínica?"
 )
 
 
+# -------------------------------------------------
 # Botón
+# -------------------------------------------------
 
-if st.button("Enviar"):
+col1, col2, col3 = st.columns([2, 1, 1])
 
-    if pregunta:
+with col3:
+    consultar = st.button(
+        "🔍 Consultar",
+        width="stretch"
+    )
 
-        with st.spinner("Vita está pensando..."):
+if pregunta:
 
+    with st.spinner("Vita está buscando la mejor respuesta..."):
 
-            resultado = graph.invoke(
-                {
-                    "pregunta": pregunta
-                }
-            )
-
-
-        st.subheader("Respuesta")
-
-        st.write(
-            resultado["respuesta"]
+        resultado = graph.invoke(
+            {
+                "pregunta": pregunta
+            }
         )
 
+    st.success("Consulta procesada correctamente.")
 
-        st.divider()
+    st.subheader("💬 Respuesta")
 
+    st.write(
+        resultado["respuesta"]
+    )
 
-        st.subheader("Información del agente")
+    st.divider()
 
+    with st.expander(
+        "🤖 Información del agente"
+    ):
 
         col1, col2 = st.columns(2)
 
-
         with col1:
 
-            st.write(
-                "Decisión del triaje:"
-            )
+            st.markdown("**Decisión del triaje**")
 
             st.info(
                 resultado["triaje"]["decision"]
             )
 
-
         with col2:
 
-            st.write(
-                "Acción final:"
-            )
+            st.markdown("**Acción final**")
 
             st.success(
                 resultado["accion_final"]
             )
 
+    if resultado["citaciones"]:
 
-        # Citaciones
+        st.divider()
 
-        if resultado["citaciones"]:
+        st.subheader("📚 Fuentes utilizadas")
 
-            st.divider()
+        for i, documento in enumerate(
+            resultado["citaciones"]
+        ):
 
-            st.subheader(
-                "📚 Fuentes utilizadas"
-            )
-
-
-            for i, documento in enumerate(
-                resultado["citaciones"]
+            with st.expander(
+                f"Documento {i+1}"
             ):
 
-                with st.expander(
-                    f"Citación {i+1}"
-                ):
+                st.caption(
+                    documento.metadata["source"]
+                )
 
-                    st.write(
-                        documento.metadata["source"]
-                    )
+                st.write(
+                    documento.page_content
+                )
 
-                    st.write(
-                        documento.page_content
-                    )
+else:
 
-    else:
+    st.warning(
+        "⚠️ Escribe una consulta antes de continuar."
+    )
 
-        st.warning(
-            "Escribe una pregunta."
-        )
+
+st.divider()
+
+st.caption(
+    "Vita AI Assistant • LangGraph • LangChain • FAISS • Google Gemini"
+)
