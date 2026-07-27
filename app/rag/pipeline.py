@@ -1,17 +1,12 @@
-from app.loaders.pdf_loader import load_documents
-from app.rag.splitter import split_documents
-from app.rag.vectorstore import create_vectorstore
+from app.rag.vectorstore import load_vectorstore
 from app.rag.retriever import create_retriever
+
 
 def initialize_rag():
 
     print("Inicializando RAG...")
 
-    docs = load_documents()
-
-    chunks = split_documents(docs)
-
-    vectorstore = create_vectorstore(chunks)
+    vectorstore = load_vectorstore()
 
     retriever = create_retriever(vectorstore)
 
