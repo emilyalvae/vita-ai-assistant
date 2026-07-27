@@ -1,8 +1,11 @@
 import streamlit as st
+from pathlib import Path
 from PIL import Image
 from app.agents.graph import graph
 
-logo = Image.open("assets/logo.png")
+BASE_DIR = Path(__file__).parent
+
+logo = Image.open(BASE_DIR / "assets" / "logo.png")
 # -------------------------------------------------
 # Configuración
 # -------------------------------------------------
